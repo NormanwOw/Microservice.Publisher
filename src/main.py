@@ -1,19 +1,27 @@
 import asyncio
 
-from src.application.send_messages import SendMessages
-from src.config import settings
+from sqlalchemy_events import SQLAlchemyEvents
+
+from src.application.send_messages import send_messages
 from src.infrastructure.logger.impl import logger
-from src.infrastructure.producer import KafkaProducer
-from src.infrastructure.uow.impl import get_uow
+from src.infrastructure.producer import producer
+from src.infrastructure.session import engine
 
 
 async def main():
-    producer = KafkaProducer(settings, logger)
     await producer.start()
+    await send_messages()
+    sa_events = SQLAlchemyEvents(
+        engine=engine,
+        autodiscover_paths=[
+            'src.application'
+        ],
+        logger=logger,
+    )
+    await sa_events()
     try:
         while True:
-            await SendMessages(get_uow(), producer)()
-            await asyncio.sleep(60)
+            await asyncio.sleep(9999)
     finally:
         await producer.stop()
 

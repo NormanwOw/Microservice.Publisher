@@ -19,6 +19,7 @@ class ISQLAlchemyRepository(ABC):
         filter_value: Any = None,
         order_by: InstrumentedAttribute = None,
         limit: int = None,
+        with_for_update: bool = False
     ) -> list[T]:
         raise NotImplementedError
 

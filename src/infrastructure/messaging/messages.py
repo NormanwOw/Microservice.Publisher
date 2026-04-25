@@ -14,7 +14,7 @@ class Message(BaseModel):
     def factory(cls, outbox: OutboxModel) -> Self:
         message = {
             'message_id': str(outbox.id),
-            'command_type': outbox.action,
+            'action': outbox.action,
             'external_reference': outbox.external_reference,
             'payload': outbox.payload,
             'producer': outbox.producer,

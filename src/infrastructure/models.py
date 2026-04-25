@@ -5,6 +5,7 @@ from typing import Optional
 from sqlalchemy import UUID, DateTime
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy_events import SaEvent, with_events
 
 
 class Base(DeclarativeBase):
@@ -22,6 +23,7 @@ class CUModel:
     )
 
 
+@with_events([SaEvent.INSERT])
 class OutboxModel(Base, CUModel):
     __tablename__ = 'outbox'
 

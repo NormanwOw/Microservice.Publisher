@@ -1,0 +1,6 @@
+.venv
+.idea
+.ruff_cache
+.git
+logs
+__pycache__

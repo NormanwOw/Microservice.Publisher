@@ -26,27 +26,23 @@ class SQLAlchemyRepository(ISQLAlchemyRepository):
         filter_value: Any = None,
         order_by: InstrumentedAttribute = None,
         limit: int = None,
+        with_for_update: bool = False
     ) -> list[T]:
-        if not filter_field:
-            if order_by:
-                res = await self.session.execute(
-                    select(self.model).order_by(desc(order_by)).limit(limit)
-                )
-            else:
-                res = await self.session.execute(select(self.model).limit(limit))
-            return res.scalars().all()
+        query = select(self.model)
+        if filter_field:
+            query = query.where(filter_field == filter_value)
 
         if order_by:
-            query = (
-                select(self.model)
-                .where(filter_field == filter_value)
-                .order_by(order_by)
-                .limit(limit)
-            )
-        else:
-            query = select(self.model).where(filter_field == filter_value).limit(limit)
-        res = await self.session.execute(query)
-        return res.scalars().all()
+            query = query.order_by(desc(order_by))
+
+        if limit:
+            query = query.limit(limit)
+
+        if with_for_update:
+            query = query.with_for_update(skip_locked=True)
+
+        res = await self.session.scalars(query)
+        return list(res.all())
 
     async def find_one(
         self, filter_field: InstrumentedAttribute = None, filter_value: Any = None
