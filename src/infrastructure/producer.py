@@ -2,6 +2,8 @@ import json
 
 from aiokafka import AIOKafkaProducer
 
+from src.config import settings
+from src.infrastructure.logger.impl import logger
 from src.infrastructure.logger.interfaces import ILogger
 from src.infrastructure.messaging.interfaces import Producer
 from src.infrastructure.messaging.messages import Message
@@ -41,3 +43,6 @@ class KafkaProducer(Producer):
         if self.producer:
             await self.producer.stop()
             self.logger.info('Kafka producer stopped')
+
+
+producer = KafkaProducer(settings, logger)

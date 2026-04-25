@@ -12,4 +12,5 @@ dependencies = [
     "pydantic-settings>=2.12.0",
     "ruff>=0.14.7",
     "sqlalchemy>=2.0.44",
+    "sqlalchemy-events-lib>=0.3.2",
 ]
